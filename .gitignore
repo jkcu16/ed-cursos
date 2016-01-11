@@ -4,3 +4,6 @@ sites/*/settings*.php
 # Ignore paths that contain user-generated content.
 sites/*/files
 sites/*/private
+
+sites/all/themes/edcursos/node_modules/
+sites/all/themes/edcursos/.idea/

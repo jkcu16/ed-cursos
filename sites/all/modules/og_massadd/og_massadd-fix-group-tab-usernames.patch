@@ -1,0 +1,232 @@
+diff --git a/includes/og_massadd.views_default.inc b/includes/og_massadd.views_default.inc
+index 0970427..c888c7f 100644
+--- a/includes/og_massadd.views_default.inc
++++ b/includes/og_massadd.views_default.inc
+@@ -12,7 +12,7 @@
+ function og_massadd_views_default_views() {
+   $view = new view();
+   $view->name = 'og_massadd';
+-  $view->description = '';
++  $view->description = 'Find and add users to group';
+   $view->tag = 'default';
+   $view->base_table = 'users';
+   $view->human_name = 'og_massadd';
+@@ -22,7 +22,7 @@ function og_massadd_views_default_views() {
+ 
+   /* Display: Master */
+   $handler = $view->new_display('default', 'Master', 'default');
+-  $handler->display->display_options['title'] = 'og_addmass';
++  $handler->display->display_options['title'] = 'Find and add users to group';
+   $handler->display->display_options['use_ajax'] = TRUE;
+   $handler->display->display_options['use_more_always'] = FALSE;
+   $handler->display->display_options['access']['type'] = 'perm';
+diff --git a/og_massadd.admin.inc b/og_massadd.admin.inc
+index ffee12a..945e354 100644
+--- a/og_massadd.admin.inc
++++ b/og_massadd.admin.inc
+@@ -61,19 +61,22 @@ function og_massadd_admin_settings() {
+  * Validate the certify configuration form
+  */
+ function og_massadd_admin_settings_validate($form, $form_state) {
+-
+-  $profilenode = $form_state['values']['og_massadd_profilenode'];
++
++  // profilenode is commented out above so doing so here too
++  /*$profilenode = $form_state['values']['og_massadd_profilenode'];
+   if (drupal_strlen($profilenode) && !field_info_field($profilenode)) {
+     form_set_error('og_massadd_profilenode', t('Please choose a profile node (or leave blank).'));
+-  }
++  }*/
+ 
+   $fname = $form_state['values']['og_massadd_profilefname'];
+-  if (drupal_strlen($profilenode) && drupal_strlen($fname) && !field_info_field($fname)) {
++  //if (drupal_strlen($profilenode) && drupal_strlen($fname) && !field_info_field($fname)) {
++  if (drupal_strlen($fname) && !field_info_field($fname)) {
+     form_set_error('og_massadd_profilefname', t('Please choose a field for the user\'s first name or leave empty.'));
+   }
+ 
+   $lname = $form_state['values']['og_massadd_profilelname'];
+-  if (drupal_strlen($profilenode) && drupal_strlen($lname) && !field_info_field($lname, $profilenode)) {
++  //if (drupal_strlen($profilenode) && drupal_strlen($lname) && !field_info_field($lname, $profilenode)) {
++  if (drupal_strlen($lname) && !field_info_field($lname, 'user')) {
+     form_set_error('og_massadd_profilelname', t('Please choose a field for the user\'s last name or leave empty.'));
+   }
+ 
+diff --git a/og_massadd.module b/og_massadd.module
+index 549a0d8..5e86b3d 100644
+--- a/og_massadd.module
++++ b/og_massadd.module
+@@ -25,7 +25,7 @@ function og_massadd_menu() {
+ 
+   $items['admin/config/group/og_massadd'] = array(
+     'title' => 'Og Mass Add',
+-    'description' => 'Configure og_massadd',
++    'description' => 'Configure OG Mass Add',
+     'page callback' => 'drupal_get_form',
+     'page arguments' => array('og_massadd_admin_settings'),
+     'access callback' => 'user_access',
+@@ -63,13 +63,12 @@ function og_massadd_menu() {
+ function ogmass_add_user_filter($group_type, $group_id) {
+ 
+   // check if user has access to view user profiles which is needed
+-  if( !user_access('access user profiles')) {
+-    drupal_set_message(t('You need to define permission "View user profiles" in
+-      order to add users to groups. Please configure the needed permission'),
+-    'error');
+-    return '';
+-  }
+-  else if (is_numeric($group_id)) {
++  //if( !user_access('View user profiles')) {
++    //drupal_set_message(t('You need to have access to view user profiles in order to add users to groups. Please configure the needed permission'), 'error');
++    //return '';
++  //}
++  //else
++  if (is_numeric($group_id)) {
+     og_context($group_type, node_load($group_id));
+     $view = views_get_view('og_massadd');
+     $view->set_arguments(array($group_id));
+@@ -91,13 +90,36 @@ function og_massadd_views_api() {
+   );
+ }
+ 
+-
++// This function needs work: it's adding the group tab to all content types
+ /* implements of hook_og_ui_get_group_admin_alter(). */
++/*
+ function og_massadd_og_ui_get_group_admin_alter(&$data, $gid) {
+   // Hijack the add people to use a custom implementation.
+   $data['add_people']['href'] = 'admin/people/mass-add-user-filter';
+ }
++*/
+ 
++/**
++ * Add a menu item that should appear in the group admin page.
++ */
++function og_massadd_og_ui_get_group_admin($group_type, $gid) {
++  $items = array();
++
++  if (og_user_access($group_type, $gid, 'add user')) {
++		$items['add_mass_people'] = array(
++			'title' => t('Mass upload of user'),
++			'description' => t('Mass add group members.'),
++			'href' => 'admin/people/mass-add-user',
++		);
++
++		$items['find_add_mass_people'] = array(
++			'title' => t('Find and add users'),
++			'description' => t('Find and add group members.'),
++			'href' => 'admin/people/mass-add-user-filter',
++		);
++  }
++  return $items;
++}
+ 
+ /**
+  * Mass adding users form
+@@ -315,7 +337,8 @@ function _og_massadd_adduser($user, $group_type, $group_ids) {
+         $account = user_save(NULL, $newuser);
+         if ($account !== FALSE) {
+           $account->password = $newuser['pass'];
+-          _user_mail_notify('register_no_approval_required', $account);
++          // Send user the admin-created user message
++          _user_mail_notify('register_admin_created', $account);
+           $didcreate = 1;
+           break; // Got user, end tries
+         }
+@@ -326,20 +349,21 @@ function _og_massadd_adduser($user, $group_type, $group_ids) {
+ //dpm('Unable to find available username');
+       return FALSE;
+     }
+-  }
+ 
+-  if (variable_get('og_massadd_createunknowns', '')) {
+-    $fname = variable_get('og_massadd_profilefname', '');
+-    $lname = variable_get('og_massadd_profilelname', '');
++    // Add the first & last names, but only if it's a new user
++    if (variable_get('og_massadd_createunknowns', '')) {
++      $fname = variable_get('og_massadd_profilefname', '');
++      $lname = variable_get('og_massadd_profilelname', '');
+ 
+-    if (drupal_strlen($fname) && field_info_field($fname)) {
+-      $account->{$fname}['und'][0]['value'] = $firstname;
+-    }
+-    if (drupal_strlen($lname) && field_info_field($lname)) {
+-      $account->{$lname}['und'][0]['value'] = $lastname;
+-    }
++      if (drupal_strlen($fname) && field_info_field($fname)) {
++        $account->{$fname}['und'][0]['value'] = $firstname;
++      }
++      if (drupal_strlen($lname) && field_info_field($lname)) {
++        $account->{$lname}['und'][0]['value'] = $lastname;
++      }
+ 
+-    user_save($account); // Actually, we don't care if this fails for now. We need better field-handling first.
++      user_save($account); // Actually, we don't care if this fails for now. We need better field-handling first.
++    }
+   }
+ 
+   // Add user to groups
+@@ -396,13 +420,13 @@ The following combinations are tried in order:
+ 
+   // #1 pri: suggested username
+   if (!empty($suggestion)) {
+-    $usernames[] = $suggestion;
++    $usernames[] = _clean_username($suggestion);
+   }
+ 
+   // #2 pri: first part of email address (always present)
+   preg_match('/^(.+)(?:@)/', $email, $matches);
+   if (!empty($matches[1])) {
+-    $usernames[] = $matches[1];
++    $usernames[] = _clean_username($matches[1]);
+   }
+   else {
+     return FALSE; // We DO need a valid mail address
+@@ -420,18 +444,18 @@ The following combinations are tried in order:
+       if (!empty($lastname)) { // Add lastname
+         $username .= $lastname;
+       }
+-      $usernames[] = $username;
++      $usernames[] = _clean_username($username);
+     }
+   }
+ 
+   // #4 pri: if no lastname, use firstname only
+   if (!empty($firstname) && empty($lastname)) {
+-    $usernames[] = $firstname;
++    $usernames[] = _clean_username($firstname);
+   }
+ 
+   // #5 pri: if no firstname, use lastname only
+   if (empty($firstname) && !empty($lastname)) {
+-    $usernames[] = $lastname;
++    $usernames[] = _clean_username($lastname);
+   }
+ 
+   // Create names to add numbers to as last resort. Different priorities than the verbatim names
+@@ -457,3 +481,12 @@ The following combinations are tried in order:
+   return reset($numbered) . ($attempt + 1 );
+ 
+ }
++
++/* Clean username: Allowed list: A-z, 0-9, spaces, periods,
++ * hyphens, apostrophes, and underscores.
++ */
++function _clean_username($string) {
++  $allowed_chars = '/[^a-z0-9\\040\\.\\-\\_]/i';
++  $cleaned_username = preg_replace($allowed_chars,'_',$string);
++  return $cleaned_username;
++}
+diff --git a/og_massadd.rules_defaults.inc b/og_massadd.rules_defaults.inc
+index b5e789b..b180d4f 100644
+--- a/og_massadd.rules_defaults.inc
++++ b/og_massadd.rules_defaults.inc
+@@ -13,7 +13,7 @@
+  */
+ function og_massadd_default_rules_configuration() {
+   $items['rules_og_massadd'] = entity_import('rules_config', '{ "rules_og_massadd" : {
+-    "LABEL" : "add_og_membership",
++    "LABEL" : "Add people to group",
+     "PLUGIN" : "action set",
+     "REQUIRES" : [ "og", "rules" ],
+     "ACCESS_EXPOSED" : "1",
