@@ -1,0 +1,48 @@
+.main-header {
+  background: $color-azul;
+  height: 50px;
+  margin-bottom: 2em;
+  &__block {
+    display: flex;
+    //align-items: center;
+  }
+  &__2 {
+    justify-content: flex-end;
+    a {
+      color: $color-blanco;
+      display: block;
+      line-height: 50px;
+      padding: 0 1.5em;
+      &:hover {
+        background: rgba(#000,.2);
+      }
+    }
+  }
+
+}
+
+.main-logo {
+  height: 36px;
+  margin-top: 7px;
+}
+
+// Menu principal
+
+#block-system-main-menu,
+#block-menu-menu-student-menu {
+  > .content > .menu {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 0;
+    list-style: none;
+    display: flex;
+    li {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    a {
+      color: $color-blanco;
+    }
+  }
+}

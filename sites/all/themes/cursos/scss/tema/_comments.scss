@@ -1,0 +1,68 @@
+[id^="edit-comment-body-und-0-format"] {
+  //display: none;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#comments {
+  h2 {
+    font-weight: $normal;
+    font-size: 1.2em;
+  }
+
+  [id^="edit-author"]{
+    display: none;
+  }
+
+  .comment {
+    border: 1px solid darken($color-gris-claro,20);
+    font-size: .85em;
+    padding: .6em;
+    margin-bottom: .2em;
+    border-left: 5px solid $color-rojo;
+
+
+    h3 {
+      display: none;
+      margin: 0 0 .5em;
+      font-size: 1.1em;
+      a {
+        color: $color-azul-oscuro;
+      }
+    }
+    .submitted {
+      opacity: .7;
+      font-size: .9em;
+      font-style: italic;
+      float: right;
+      .permalink {
+        display: none;
+      }
+    }
+  }
+
+  ul {
+    margin: 0;
+  }
+
+  li {
+    padding: 0;
+  }
+}
+
+#comments .indented .comment {
+  border-left: 5px solid $color-azul;
+  margin-top: -.2em;
+  border-top: none;
+}
+
+.comment-reply a {
+  display: inline-block;
+  font-size: .9em;
+  line-height: 2;
+  background: $color-gris-claro;
+  color: $color-gris-oscuro;
+  padding: 0 1em;
+  margin-top: 1em;
+}

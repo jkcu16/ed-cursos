@@ -1,0 +1,44 @@
+#sidebar_first {
+  .block {
+    margin-bottom: 2em;
+  }
+  h2 {
+    font-size: 1em;
+    margin-top: 0;
+    background: $color-azul;
+    color: $color-blanco;
+    line-height: 2;
+    padding: 0 1em;
+    font-weight: $normal;
+  }
+
+  #block-og-extras-node-links {
+    .item-list {
+      ul {
+        margin: 0;
+        padding-left: 0;
+      }
+      li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        display: block;
+        background: $color-rojo;
+        color: #fff;
+        text-align: center;
+        line-height: 3rem;
+        opacity: .8;
+        text-transform: uppercase;
+        font-weight: $light;
+        &:hover{
+          opacity: 1;
+        }
+        &:before {
+          content: "Añadir "
+        }
+      }
+    }
+  }
+}
