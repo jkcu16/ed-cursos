@@ -2967,3 +2967,6 @@ strong, label {
   opacity: .8;
   font-size: .8em;
   font-style: italic; }
+
+.ed-video {
+  margin-bottom: 1.5em; }
