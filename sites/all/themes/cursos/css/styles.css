@@ -2869,7 +2869,7 @@ strong, label {
   border: 1px solid #bdbdbd;
   font-size: .85em;
   padding: .6em;
-  margin-bottom: .2em;
+  margin-bottom: .5em;
   border-left: 5px solid #ff3814; }
   #comments .comment h3 {
     display: none;
@@ -2878,12 +2878,14 @@ strong, label {
     #comments .comment h3 a {
       color: #255484; }
   #comments .comment .submitted {
-    opacity: .7;
-    font-size: .9em;
-    font-style: italic;
+    display: none; }
+  #comments .comment .user-picture {
     float: right; }
-    #comments .comment .submitted .permalink {
-      display: none; }
+    #comments .comment .user-picture img {
+      width: 40px;
+      border: 1px solid #f0f0f0;
+      padding: 2px;
+      margin-left: 1.5em; }
 
 #comments ul {
   margin: 0; }
@@ -2893,7 +2895,7 @@ strong, label {
 
 #comments .indented .comment {
   border-left: 5px solid steelblue;
-  margin-top: -.2em;
+  margin-top: -.5em;
   border-top: none; }
 
 .comment-reply a {
@@ -2904,6 +2906,9 @@ strong, label {
   color: #444;
   padding: 0 1em;
   margin-top: 1em; }
+
+.comment-add {
+  display: none !important; }
 
 #block-user-login {
   position: fixed;
@@ -2962,6 +2967,84 @@ strong, label {
     z-index: 300;
     font-size: 1.5em;
     cursor: pointer; }
+
+.video-temas {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: none; }
+
+.video-tema {
+  margin-bottom: .2em; }
+  .video-tema__time {
+    background: #c4d8e8;
+    display: inline-block;
+    line-height: 2;
+    padding: 0 .5em;
+    font-family: monospace;
+    margin-right: .5em; }
+
+.horizontal-tabs {
+  font-size: .9em; }
+  .horizontal-tabs-list {
+    text-align: center; }
+  .horizontal-tabs-panes {
+    padding-top: 1.5em; }
+
+.download-video {
+  display: inline-block;
+  line-height: 2.5em;
+  background: rgba(255, 56, 20, 0.8);
+  color: #FDFDFD;
+  padding: 0 1.5em;
+  cursor: pointer;
+  margin-bottom: 1em;
+  width: 20em;
+  text-align: center; }
+  .download-video:hover {
+    background: rgba(250, 38, 0, 0.8); }
+  .download-video:active {
+    -webkit-transform: scale(0.97);
+            transform: scale(0.97); }
+
+.field-name-field-archivos-de-esta-clase .field-label {
+  font-weight: 500;
+  margin-bottom: 1em;
+  margin-top: 1em; }
+
+.field-name-field-archivos-de-esta-clase .file {
+  display: inline-block;
+  line-height: 2.5em;
+  background: steelblue;
+  color: #FDFDFD;
+  padding: 0 1.5em;
+  cursor: pointer;
+  margin-bottom: 1em;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 20em; }
+  .field-name-field-archivos-de-esta-clase .file:hover {
+    background: #3f75a2; }
+  .field-name-field-archivos-de-esta-clase .file:active {
+    -webkit-transform: scale(0.97);
+            transform: scale(0.97); }
+  .field-name-field-archivos-de-esta-clase .file a {
+    color: #FDFDFD;
+    display: inline-block;
+    margin-left: .5em; }
+
+.class-resource {
+  display: block;
+  margin-bottom: .5em; }
+  .class-resource:hover {
+    text-decoration: underline; }
 
 .easy-breadcrumb {
   opacity: .8;

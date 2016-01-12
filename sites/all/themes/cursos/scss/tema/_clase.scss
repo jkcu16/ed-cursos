@@ -1,0 +1,70 @@
+.video-temas {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.video-tema {
+  margin-bottom: .2em;
+  &__time {
+    background: lighten($color-azul-claro,10);
+    display: inline-block;
+    line-height: 2;
+    padding: 0 .5em;
+    font-family: monospace;
+    margin-right: .5em;
+  }
+}
+
+.horizontal-tabs {
+  font-size: .9em;
+  &-list {
+    text-align: center;
+  }
+  &-panes {
+    padding-top: 1.5em;
+    fieldset {
+
+    }
+  }
+}
+
+// Boton de descarga de video
+.download-video {
+  @include button(rgba($color-rojo,.8),$color-blanco);
+  width: 20em;
+  text-align: center;
+}
+
+// Archivos del curso
+.field-name-field-archivos-de-esta-clase {
+  .field-label {
+    font-weight: $bold;
+    margin-bottom: 1em;
+    margin-top: 1em;
+  }
+  .file {
+    @include button($color-azul,$color-blanco);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20em;
+
+    a {
+      color: $color-blanco;
+      display: inline-block;
+      margin-left: .5em;
+    }
+  }
+}
+
+// Recursos
+
+.class-resource {
+  display: block;
+  margin-bottom: .5em;
+  &:hover {
+    text-decoration: underline;
+  }
+}

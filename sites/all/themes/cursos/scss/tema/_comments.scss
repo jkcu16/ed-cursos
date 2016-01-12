@@ -19,7 +19,7 @@
     border: 1px solid darken($color-gris-claro,20);
     font-size: .85em;
     padding: .6em;
-    margin-bottom: .2em;
+    margin-bottom: .5em;
     border-left: 5px solid $color-rojo;
 
 
@@ -32,12 +32,22 @@
       }
     }
     .submitted {
-      opacity: .7;
-      font-size: .9em;
-      font-style: italic;
-      float: right;
+      //opacity: .7;
+      //font-size: .9em;
+      //font-style: italic;
+      //float: right;
+      display: none;
       .permalink {
-        display: none;
+        //display: none;
+      }
+    }
+    .user-picture {
+      float: right;
+      img {
+        width: 40px;
+        border: 1px solid $color-gris-claro;
+        padding: 2px;
+        margin-left: 1.5em;
       }
     }
   }
@@ -53,7 +63,7 @@
 
 #comments .indented .comment {
   border-left: 5px solid $color-azul;
-  margin-top: -.2em;
+  margin-top: -.5em;
   border-top: none;
 }
 
@@ -65,4 +75,8 @@
   color: $color-gris-oscuro;
   padding: 0 1em;
   margin-top: 1em;
+}
+
+.comment-add {
+  display: none !important;
 }
