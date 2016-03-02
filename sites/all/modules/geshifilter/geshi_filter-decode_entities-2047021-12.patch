@@ -1,0 +1,108 @@
+diff --git a/geshifilter.admin.inc b/geshifilter.admin.inc
+index fc89d91..1267c0c 100644
+--- a/geshifilter.admin.inc
++++ b/geshifilter.admin.inc
+@@ -421,6 +421,15 @@ function _geshifilter_general_highlight_tags_settings($format = NULL) {
+     '#default_value' => geshifilter_tags($format_id),
+     '#description' => t('Tags that should activate the GeSHi syntax highlighting. Specify a space-separated list of tagnames.'),
+   );
++
++  // Decode entities.
++  $form["geshifilter_decode_entities$f"] = array(
++    '#type' => 'checkbox',
++    '#title' => t('Decode entities'),
++    '#default_value' => geshifilter_decode_entities($format_id),
++    '#description' => t('Decode entities, for example, if the code has been typed in a WYSIWYG editor.'),
++  );
++
+   // Container tag styles.
+   $form["geshifilter_tag_styles$f"] = array(
+     '#type' => 'checkboxes',
+diff --git a/geshifilter.inc b/geshifilter.inc
+index ac9043e..f231547 100644
+--- a/geshifilter.inc
++++ b/geshifilter.inc
+@@ -118,6 +118,13 @@ function geshifilter_tags($format = NULL) {
+   return variable_get("geshifilter_tags_{$format}", geshifilter_tags());
+ }
+ 
++function geshifilter_decode_entities($format = NULL) {
++  if (!geshifilter_use_format_specific_options() || $format === NULL) {
++    return variable_get('geshifilter_decode_entities', 0);
++  }
++  return variable_get("geshifilter_decode_entities_{$format}", geshifilter_decode_entities());
++}
++
+ function _geshifilter_tag_styles($format = NULL) {
+   if (!geshifilter_use_format_specific_options() || $format === NULL) {
+     return variable_get('geshifilter_tag_styles', array(
+diff --git a/geshifilter.pages.inc b/geshifilter.pages.inc
+index 385a28f..adca618 100644
+--- a/geshifilter.pages.inc
++++ b/geshifilter.pages.inc
+@@ -138,7 +138,7 @@ function _geshifilter_prepare($format, $text) {
+   if (in_array(GESHIFILTER_BRACKETS_PHPBLOCK, $tag_styles)) {
+     // Prepare < ?php ... ? > blocks.
+     $pattern = '#[\[<](\?php|\?PHP|%)(.+?)((\?|%)[\]>]|$)#s';
+-    $text = preg_replace_callback($pattern, '_geshifilter_prepare_php_callback', $text);
++    $text = preg_replace_callback($pattern, create_function('$match', "return _geshifilter_prepare_php_callback(\$match, '$format');"), $text);
+   }
+   return $text;
+ }
+@@ -164,6 +164,11 @@ function _geshifilter_prepare_callback($match, $format) {
+   $tag_attributes = $match[3];
+   $content = $match[6];
+ 
++  // Decode HTML entities if option has been set
++  if (geshifilter_decode_entities($format)) {
++    $content = html_entity_decode($content, ENT_QUOTES);
++  }
++
+   // get the default highlighting mode
+   $lang = variable_get('geshifilter_default_highlighting', GESHIFILTER_DEFAULT_PLAINTEXT);
+   if ($lang == GESHIFILTER_DEFAULT_DONOTHING) {
+@@ -200,7 +205,11 @@ function _geshifilter_prepare_callback($match, $format) {
+ /**
+  * _geshifilter_prepare callback for < ?php ... ? > blocks.
+  */
+-function _geshifilter_prepare_php_callback($match) {
++function _geshifilter_prepare_php_callback($match, $format) {
++  // Decode HTML entities if option has been set
++  if (geshifilter_decode_entities($format)) {
++    $match[2] = html_entity_decode($match[2], ENT_QUOTES);
++  }
+   return '[geshifilter-questionmarkphp]'
+     . str_replace(array("\r", "\n"), array('', '&#10;'), check_plain($match[2]))
+     .'[/geshifilter-questionmarkphp]';
+diff --git a/geshifilter.test b/geshifilter.test
+index d8a2a4a..77298f2 100644
+--- a/geshifilter.test
++++ b/geshifilter.test
+@@ -552,5 +552,26 @@ class GeshiFilterTest extends DrupalWebTestCase {
+       t('Checking if [code language="ini"][section]...[/code] works'));
+   }
+ 
+-}
++  /**
++   * Issue https://www.drupal.org/node/2047021.
++   */
++  public function testSpecialChars() {
++    variable_set('geshifilter_tags', 'code');
++    variable_set('geshifilter_language_enabled_php', TRUE);
++    variable_set('geshifilter_decode_entities', TRUE);
++
++    $source = '<code language="php"><?php echo("&lt;b&gt;Hi&lt;/b&gt;"); ?></code>';
+ 
++    // Create a node.
++    $edit = array(
++      'title' => 'Test for Custom Filter',
++      'body[und][0][value]' => $source,
++      'body[und][0][format]' => $this->input_format_id,
++    );
++    // Post node
++    $this->drupalPost('node/add/page', $edit, t('Save'));
++    $this->drupalGet('node/1');
++    // The same string must be on page, not double encoded.
++    $this->assertRaw('&quot;&lt;b&gt;Hi&lt;/b&gt;&quot;', 'The code is not double encoded.');
++  }
++}

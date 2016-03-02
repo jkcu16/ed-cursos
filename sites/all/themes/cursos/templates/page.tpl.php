@@ -137,6 +137,9 @@
 	  		    </aside>
 	  		<?php endif; ?>
 		</div> <!-- /.section, /#content -->
+    <script>
+      Prism.highlightAll();
+    </script>
    </div> <!-- /#main, /#main-wrapper -->
 
 
