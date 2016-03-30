@@ -2865,7 +2865,7 @@ display: none;}
   font-size: 1.2em; }
 
 #comments [id^="edit-author"] {
-  display: none; 
+  display: none;
 }
 
 #comments .comment {
@@ -3303,3 +3303,6 @@ pre .line-highlight {
   margin-top: 0;
 }
 
+.comment.token {
+  border: none !important;
+}
