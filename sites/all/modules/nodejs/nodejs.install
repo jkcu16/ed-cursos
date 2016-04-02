@@ -90,28 +90,36 @@ function nodejs_requirements($phase) {
   // HTTP Request failed so we just check to see if that happened or not. If
   // There's a response, we can connect to the server.
   if (Nodejs::healthCheck()) {
-    if (!Nodejs::safeNodeServerVersion()) {
+    $server_version = Nodejs::getServerVersion();
+
+    if (!Nodejs::checkServerVersion()) {
       $result = array(
-        'value' => t('The Drupal-Node.js application version is insecure. Please update.'),
+        'value' => t('The Drupal-Node.js server application is not compatible with this version of the module. Please ensure both the Node.js Integration module and Node.js server application are up to date.'),
         'severity' => REQUIREMENT_ERROR,
+      );
+    }
+    else if (nodejs_server_has_update()) {
+      $result = array(
+        'value' => t('The Drupal-Node.js server application (version @version) is out of date. Please install the latest version.', array('@version' => $server_version)),
+        'severity' => REQUIREMENT_WARNING,
       );
     }
     else {
       $result = array(
-        'value' => t('The Node.js server was successfully reached.'),
+        'value' => t('The Drupal-Node.js server (version @version) was successfully reached.', array('@version' => $server_version)),
         'severity' => REQUIREMENT_OK,
       );
     }
   }
-  // Http request to the server failed.
   else {
+    // Http request to the server failed.
     $result = array(
-      'value' => 'Error reaching the Node.js server. Enable HTTP error-logging and check the dblog page for more details',
+      'value' => t('Error reaching the Node.js server. Make sure your Node.js service key matches the key set in the server application. Enable HTTP error-logging and check the dblog page for more details.'),
       'severity' => REQUIREMENT_ERROR,
     );
   }
 
-  // Merge the result from Nodejs
   $requirements['nodejs'] += $result;
+  return $requirements;
 }
 

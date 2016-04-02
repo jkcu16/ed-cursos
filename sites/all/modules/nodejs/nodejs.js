@@ -131,5 +131,3 @@ Drupal.Nodejs.sendAuthMessage = function () {
 
 })(jQuery);
 
-// vi:ai:expandtab:sw=2 ts=2
-

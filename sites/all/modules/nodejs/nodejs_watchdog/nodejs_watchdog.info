@@ -7,9 +7,9 @@ dependencies[] = nodejs
 dependencies[] = nodejs_ajax
 dependencies[] = dblog
 
-; Information added by Drupal.org packaging script on 2016-02-15
-version = "7.x-1.11"
+; Information added by Drupal.org packaging script on 2016-03-15
+version = "7.x-1.12"
 core = "7.x"
 project = "nodejs"
-datestamp = "1455563948"
+datestamp = "1458013810"
 
