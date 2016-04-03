@@ -1,0 +1,54 @@
+.main-members {
+  .item-list {
+    overflow: hidden;
+    ul {
+      @include grid(li,7);
+    }
+    li {
+      border: 1px solid #ccc;
+      padding: .2em .2em .4em;
+      font-size: .785em;
+      line-height: 1.3;
+      text-align: center;
+      word-break: break-all;
+    }
+  }
+  
+  // conteo de registros
+  #views-record-count-text {
+    display: table;
+    margin: 2em auto;
+    background: $color-azul;
+    line-height: 3;
+    padding: 0 1.5em;
+    strong {
+      color: #fff;
+      font-size: 1.2em;
+    }
+  }
+}
+
+#profesor {
+  order: -1;
+  background: rgba(yellow,.2);
+}
+
+// Bloque de profesor en el sidebar
+#sidebar_first {
+  .view-og-extras-members {
+    li {
+      overflow: hidden;
+      padding-left: 0;
+      .views-field-picture {
+        float: left;
+        margin-right: 1em;
+        img {
+          border-radius: 50%;
+        }
+      }
+      .views-field-realname {
+        font-size: 1.4em;
+      }
+    }
+  }
+}

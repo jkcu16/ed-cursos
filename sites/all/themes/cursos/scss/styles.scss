@@ -69,6 +69,10 @@
   @import "tema/comments";
   @import "tema/login";
   @import "tema/clase";
+  @import "tema/members";
 
 // Modulos. Los componentes que se repiten en varias partes del proyecto
   @import "modulos/modulos";
+
+// Librerias
+  @import "libraries/prism";
